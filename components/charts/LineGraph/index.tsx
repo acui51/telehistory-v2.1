@@ -1,6 +1,34 @@
 import { ResponsiveLine as NivoLine } from "@nivo/line";
 import { ChartTooltip } from "../components";
 
+const CustomSymbol = ({
+  size,
+  color,
+  borderWidth,
+  borderColor,
+}: {
+  size: number;
+  color: string;
+  borderWidth: number;
+  borderColor: string;
+}) => (
+  <g>
+    <circle
+      fill="#fff"
+      r={size / 2}
+      strokeWidth={borderWidth}
+      stroke={borderColor}
+    />
+    <circle
+      r={size / 5}
+      strokeWidth={borderWidth}
+      stroke={borderColor}
+      fill={color}
+      fillOpacity={0.35}
+    />
+  </g>
+);
+
 const LineChart = ({
   data,
   onClick,
@@ -13,7 +41,6 @@ const LineChart = ({
     margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
     yScale={{
       type: "linear",
-      stacked: true,
     }}
     xScale={{
       type: "time",
@@ -35,8 +62,9 @@ const LineChart = ({
       legendOffset: -45,
     }}
     pointSize={8}
+    pointSymbol={CustomSymbol}
     pointColor={{ theme: "background" }}
-    pointBorderWidth={2}
+    pointBorderWidth={1}
     pointBorderColor={{ from: "serieColor" }}
     pointLabelYOffset={-12}
     useMesh={true}

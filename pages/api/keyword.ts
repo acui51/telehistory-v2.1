@@ -7,10 +7,11 @@ const pd = require("paralleldots");
 pd.apiKey = process.env.PARALLEL_DOTS_API_KEY;
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === "GET") {
-    pd.sentiment("Team performed well overall.", "en")
-      .then((sentiment: any) => {
-        res.status(200).send(JSON.parse(sentiment));
+  if (req.method === "POST") {
+    const textArray = JSON.stringify(req.body.textArray);
+    pd.keywordsBatch(textArray)
+      .then((keywords: any) => {
+        res.status(200).send(JSON.parse(keywords));
       })
       .catch((err: any) => {
         res.status(400).send(err);
