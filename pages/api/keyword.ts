@@ -8,8 +8,7 @@ pd.apiKey = process.env.PARALLEL_DOTS_API_KEY;
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === "POST") {
-    const textArray = JSON.stringify(req.body.textArray);
-    pd.keywordsBatch(textArray)
+    pd.keywords(req.body.text)
       .then((keywords: any) => {
         res.status(200).send(JSON.parse(keywords));
       })
