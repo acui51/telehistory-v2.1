@@ -18,7 +18,7 @@ const getDateString = (message: IMessage): string => {
   return message.date.split("T")[0];
 };
 
-const TransformData = (data: any) => {
+const transformLineData = (data: any) => {
   let usersSeen = new Set(); // track users seen
   let transformedData = <ITransformedData>{};
   const messages = data.messages;
@@ -57,4 +57,4 @@ const TransformData = (data: any) => {
   return Object.keys(transformedData).map((elem) => transformedData[elem]);
 };
 
-export default TransformData;
+export default transformLineData;

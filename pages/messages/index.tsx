@@ -1,26 +1,18 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import DatePicker from "react-datepicker";
+import axios from "axios";
 import { IMessage } from "../../types/types";
-import { LineChart } from "../../components";
+import { LineChart, CalendarChart } from "../../components";
 import DATA from "../../mockData/result.json";
-import transformData from "../../helpers/lineGraph/transformData";
-import getChatsFromDate from "../../helpers/getChatsFromDate";
-
+import transformLineData from "../../helpers/lineGraph/transformData";
+import transformCalendarData from "../../helpers/calendarGraph/transformData";
+import { getChatsFromDate, extractMessageText } from "../../helpers/helpers";
 import "react-datepicker/dist/react-datepicker.css";
 
 const Message = ({ message }: { message: IMessage }) => {
   const dateString = new Date(message.date).toString();
-  let messageText: string;
-  if (message.photo || message.file || message.thumbnail) {
-    messageText = "(Non-text message)";
-  } else {
-    if (message.text.constructor === Array) {
-      messageText = message.text[0].text;
-    } else {
-      messageText = message.text as string;
-    }
-  }
+  const messageText = extractMessageText(message);
 
   return (
     <div className="mb-5">
@@ -39,10 +31,33 @@ const Messages = () => {
   const [messagesSelected, setMessagesSelected] = useState<IMessage[]>([]);
   const [startDate, setStartDate] = useState<Date>(new Date(firstMessageDate));
   const [endDate, setEndDate] = useState<Date>(new Date(lastMessageDate));
-  const transformedData = useMemo(() => transformData(copyData), [copyData]);
+  const [showSentiment, setShowSentiment] = useState({
+    visible: false,
+    value: {},
+  });
+  const [showKeyword, setShowKeyword] = useState({ visible: false, value: {} });
+  let transformedLineData = transformLineData(copyData);
+  let transformedCalendarData = transformCalendarData(copyData);
 
+  /** Fetch a classification data for a certain day when messages selected */
+  const fetchData = (endpoint: string) => {
+    const concatText = messagesSelected
+      .map((message) => extractMessageText(message))
+      .join(". ");
+
+    axios
+      .post(`/api/${endpoint}`, { text: concatText })
+      .then((res) => {
+        endpoint === "sentiment"
+          ? setShowSentiment({ visible: true, value: res.data })
+          : setShowKeyword({ visible: true, value: res.data });
+      })
+      .catch((err) => console.log(err));
+  };
+
+  // Update dates from DatePicker
   const updateDates = () => {
-    const newMessages = copyData.messages.filter((message: IMessage) => {
+    const newMessages = DATA.messages.filter((message: any) => {
       const messageDate = new Date(message.date);
       if (
         messageDate.getTime() >= startDate.getTime() &&
@@ -52,12 +67,10 @@ const Messages = () => {
       }
     });
 
-    const newCopyData = {
-      ...copyData,
+    setCopyData({
+      ...DATA,
       messages: newMessages,
-    };
-
-    setCopyData(newCopyData);
+    });
   };
 
   return (
@@ -72,25 +85,33 @@ const Messages = () => {
         selected={startDate}
         onChange={(date: Date) => setStartDate(date)}
         selectsStart
-        startDate={startDate}
+        startDate={new Date(firstMessageDate)}
+        endDate={new Date(lastMessageDate)}
       />
       <DatePicker
         selected={endDate}
         selectsEnd
-        startDate={startDate}
-        endDate={endDate}
-        minDate={startDate}
-        onChange={(date: Date) => setEndDate(date)}
+        startDate={new Date(firstMessageDate)}
+        endDate={new Date(lastMessageDate)}
+        minDate={new Date(firstMessageDate)}
+        onChange={(date: Date) => setEndDate(date)} // end Date
       />
       <button onClick={updateDates}>Go</button>
 
       {/* Line Chart */}
       <div className="h-96">
         <LineChart
-          data={transformedData}
+          data={transformedLineData}
           onClick={(point, _event) =>
             setMessagesSelected(getChatsFromDate(DATA, point.data.x))
           }
+        />
+      </div>
+      <div className="h-96">
+        <CalendarChart
+          data={transformedCalendarData}
+          startDate={firstMessageDate.split("T")[0]}
+          endDate={lastMessageDate.split("T")[0]}
         />
       </div>
 
@@ -102,6 +123,12 @@ const Messages = () => {
               messagesSelected[0].date
             ).toString()}`}
           </div>
+          <button onClick={() => fetchData("sentiment")}>Sentiment</button>
+          <button onClick={() => fetchData("keyword")}>Keywords</button>
+
+          {showKeyword.visible && JSON.stringify(showKeyword.value)}
+          {showSentiment.visible && JSON.stringify(showSentiment.value)}
+
           <div>
             {messagesSelected.map((message: IMessage, i: number) => (
               <Message key={i} message={message} />
