@@ -3,7 +3,12 @@ import Head from "next/head";
 import DatePicker from "react-datepicker";
 import axios from "axios";
 import { IMessage } from "../../types/types";
-import { LineChart, CalendarChart } from "../../components";
+import {
+  LineChart,
+  CalendarChart,
+  PieChart,
+  BubbleChart,
+} from "../../components";
 import DATA from "../../mockData/result.json";
 import transformLineData from "../../helpers/lineGraph/transformData";
 import transformCalendarData from "../../helpers/calendarGraph/transformData";
@@ -126,8 +131,16 @@ const Messages = () => {
           <button onClick={() => fetchData("sentiment")}>Sentiment</button>
           <button onClick={() => fetchData("keyword")}>Keywords</button>
 
-          {showKeyword.visible && JSON.stringify(showKeyword.value)}
-          {showSentiment.visible && JSON.stringify(showSentiment.value)}
+          {showKeyword.visible && (
+            <div>
+              <BubbleChart />
+            </div>
+          )}
+          {showSentiment.visible && (
+            <div className="h-96">
+              <PieChart data={showSentiment.value} />
+            </div>
+          )}
 
           <div>
             {messagesSelected.map((message: IMessage, i: number) => (
