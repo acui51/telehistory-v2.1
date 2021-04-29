@@ -7,10 +7,12 @@ const CalendarGraph: React.FC<{
   startDate: string;
   endDate: string;
   homePage?: boolean;
-}> = ({ data, startDate, endDate, homePage = false }) => {
+  width?: number;
+  height?: number;
+}> = ({ data, startDate, endDate, homePage = false, width, height }) => {
   return homePage ? (
     <NormalNivoCalendar
-      width={1300}
+      width={900}
       height={300}
       data={data}
       from={startDate}

@@ -16,10 +16,9 @@ const PieChart: React.FC<{ data: any; homePage?: boolean }> = ({
 
   return homePage ? (
     <NormalNivoPie
-      width={1300}
-      height={800}
+      width={800}
+      height={500}
       data={transformedData}
-      margin={{ top: 40, right: 150, bottom: 80, left: 80 }}
       innerRadius={0.5}
       padAngle={0.7}
       cornerRadius={3}

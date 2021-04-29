@@ -47,6 +47,8 @@ const LineChart = ({
   enableCrosshair = true,
   customMargin,
   homePage = false,
+  width,
+  height,
 }: {
   data: any;
   onClick?: (point: any, event: any) => void;
@@ -57,11 +59,13 @@ const LineChart = ({
   enableCrosshair?: boolean;
   customMargin?: IMargin;
   homePage?: boolean;
+  width?: number;
+  height?: number;
 }) => {
   return homePage ? (
     // @ts-ignore
     <NormalNivoLine
-      width={1300}
+      width={900}
       height={300}
       data={data}
       margin={

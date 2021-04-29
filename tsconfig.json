@@ -33,7 +33,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "components/ui/ResponsiveWrapper"  ],
   "exclude": [
     "node_modules"
   ]
