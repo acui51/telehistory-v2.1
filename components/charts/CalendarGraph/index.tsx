@@ -18,7 +18,6 @@ const CalendarGraph: React.FC<{
       from={startDate}
       to={endDate}
       emptyColor="#eeeeee"
-      // colors={["#9BE9A8", "#3FC463", "#31A14D", "#216E39"]}
       colors={["#9ECAE1", "#6BAED6", "#4292C6", "#0088cc"]}
       yearSpacing={40}
       monthBorderColor="#ffffff"
@@ -54,14 +53,8 @@ const CalendarGraph: React.FC<{
       tooltip={(data) => {
         if (data.value === undefined) return null;
         return (
-          <div
-            style={{
-              backgroundColor: "black",
-              padding: "10px",
-              borderRadius: 4,
-            }}
-          >
-            <span style={{ color: "white" }}>{data.value} messages</span>{" "}
+          <div className="bg-gray-50 rounded-md p-1">
+            <span style={{ color: "black" }}>{data.value} messages</span>{" "}
             <span style={{ color: "gray" }}>on {data.day}</span>
           </div>
         );

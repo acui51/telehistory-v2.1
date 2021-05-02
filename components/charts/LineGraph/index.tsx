@@ -47,6 +47,7 @@ const LineChart = ({
   enableCrosshair = true,
   customMargin,
   homePage = false,
+  increments,
   width,
   height,
 }: {
@@ -59,6 +60,7 @@ const LineChart = ({
   enableCrosshair?: boolean;
   customMargin?: IMargin;
   homePage?: boolean;
+  increments: number;
   width?: number;
   height?: number;
 }) => {
@@ -177,7 +179,7 @@ const LineChart = ({
         showAxisBottom
           ? {
               format: "%b %d",
-              tickValues: `every 2 days`,
+              tickValues: `every ${increments} days`,
               legend: "Date",
               legendOffset: 35,
             }

@@ -3,16 +3,13 @@ import Head from "next/head";
 import DatePicker from "react-datepicker";
 import axios from "axios";
 import { IMessage } from "../../types/types";
-import {
-  LineChart,
-  CalendarChart,
-  PieChart,
-  BubbleChart,
-} from "../../components";
+import { LineChart, CalendarChart, PieChart } from "../../components";
 import DATA from "../../mockData/result.json";
 import transformLineData from "../../helpers/lineGraph/transformData";
 import transformCalendarData from "../../helpers/calendarGraph/transformData";
 import { getChatsFromDate, extractMessageText } from "../../helpers/helpers";
+import { useIsSm } from "../../helpers/helpers";
+import { useRouter } from "next/router";
 import "react-datepicker/dist/react-datepicker.css";
 
 const dateToString = (date: Date) => {
@@ -85,6 +82,8 @@ const Messages = () => {
   const graphSelectionClassname2 = `h-2 w-10 ${
     !showCalendar ? "bg-[#0088cc]" : "bg-gray-300"
   } m-1 cursor-pointer transition duration-200 ease-in`;
+  const isSm = useIsSm();
+  const router = useRouter();
 
   let transformedLineData = transformLineData(copyData);
   let transformedCalendarData = transformCalendarData(copyData);
@@ -128,11 +127,21 @@ const Messages = () => {
       <Head>
         <title>Telehistory V2 - Messages</title>
         <link rel="icon" href="/favicon.ico" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap"
+          rel="stylesheet"
+        ></link>
       </Head>
 
       {/* Hero Navbar */}
       <div className="flex items-center justify-between fixed w-full p-4 z-10 bg-[#0088cc]">
-        <div className="flex">
+        <div
+          className="flex cursor-pointer"
+          onClick={() => {
+            router.push("/");
+          }}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6 mr-2.5"
@@ -150,9 +159,17 @@ const Messages = () => {
           <div className="title-heavy text-white">Telehistory V2</div>
         </div>
       </div>
-      <div className="px-32 py-16 flex flex-col">
+
+      {/* Body */}
+      <div className="px-4 py-16 sm:px-32 sm:py-16 flex flex-col">
+        <div className="mt-4 mb-2">
+          <p className="text-3xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
+            Message Frequency
+          </p>
+        </div>
         {/* Date Picker */}
-        {/* <div>
+        <div className="flex">
+          <p className="mr-5">Select Dates:</p>
           <DatePicker
             selected={startDate}
             onChange={(date: Date) => setStartDate(date)}
@@ -169,11 +186,6 @@ const Messages = () => {
             onChange={(date: Date) => setEndDate(date)} // end Date
           />
           <button onClick={updateDates}>Go</button>
-        </div> */}
-        <div className="mt-4">
-          <p className="text-3xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
-            Message Frequency
-          </p>
         </div>
         {/* Line Chart */}
         <div className="h-96">
@@ -183,6 +195,7 @@ const Messages = () => {
               onClick={(point, _event) =>
                 setMessagesSelected(getChatsFromDate(DATA, point.data.x))
               }
+              increments={isSm ? 20 : 5}
             />
           ) : (
             <CalendarChart
@@ -209,7 +222,7 @@ const Messages = () => {
         {messagesSelected.length > 0 && (
           <div className="flex flex-wrap mt-10 justify-center">
             {/* Messages */}
-            <div className="w-full md:w-[45%] mx-7 max-h-[] overflow-scroll border-2 rounded-md p-4">
+            <div className="w-full md:w-[45%] mx-6 max-h-[] overflow-scroll border-2 rounded-md p-4">
               <div className="mb-5">
                 <p className="text-2xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
                   {`Messages from ${dateToString(
@@ -226,7 +239,7 @@ const Messages = () => {
               </div>
             </div>
             {/* Sentiment + Keywords */}
-            <div className="w-full md:w-[45%] mx-7 border-2 rounded-md p-4">
+            <div className="w-full md:w-[45%] mx-6 border-2 rounded-md p-4">
               <p className="text-2xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
                 Sentiment and Keyword Analysis
               </p>
