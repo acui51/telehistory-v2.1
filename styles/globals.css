@@ -3,6 +3,18 @@
 @tailwind utilities;
 
 @layer utilities {
+  @variants responsive {
+    /* Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+  }
+
   .display-heavy {
     font-size: 2.25rem;
     line-height: 3rem;

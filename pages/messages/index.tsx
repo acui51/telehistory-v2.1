@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Head from "next/head";
 import DatePicker from "react-datepicker";
 import axios from "axios";
-import { IMessage } from "../../types/types";
+import { IMessage, IKeyword } from "../../types/types";
 import { LineChart, CalendarChart, PieChart } from "../../components";
 import DATA from "../../mockData/result.json";
 import transformLineData from "../../helpers/lineGraph/transformData";
@@ -10,6 +10,7 @@ import transformCalendarData from "../../helpers/calendarGraph/transformData";
 import { getChatsFromDate, extractMessageText } from "../../helpers/helpers";
 import { useIsSm } from "../../helpers/helpers";
 import { useRouter } from "next/router";
+import Button from "@/ui/Button";
 import "react-datepicker/dist/react-datepicker.css";
 
 const dateToString = (date: Date) => {
@@ -74,8 +75,13 @@ const Messages = () => {
     visible: false,
     value: {},
   });
-  const [showKeyword, setShowKeyword] = useState({ visible: false, value: {} });
+  const [showSentimentCard, setShowSentimentCard] = useState<boolean>(true);
+  const [showKeyword, setShowKeyword] = useState<{
+    visible: boolean;
+    value: IKeyword[];
+  }>({ visible: false, value: [] });
   const [showCalendar, setShowCalendar] = useState(true);
+  const [showModal, setShowModal] = useState(false);
   const graphSelectionClassname1 = `h-2 w-10 ${
     showCalendar ? "bg-[#0088cc]" : "bg-gray-300"
   } m-1 cursor-pointer transition duration-200 ease-in`;
@@ -89,9 +95,9 @@ const Messages = () => {
   let transformedCalendarData = transformCalendarData(copyData);
 
   /** Fetch a classification data for a certain day when messages selected */
-  const fetchData = (endpoint: string) => {
+  const fetchData = (endpoint: string, messagesSelected: any) => {
     const concatText = messagesSelected
-      .map((message) => extractMessageText(message))
+      .map((message: any) => extractMessageText(message))
       .join(". ");
 
     axios
@@ -120,6 +126,13 @@ const Messages = () => {
       ...DATA,
       messages: newMessages,
     });
+  };
+
+  const graphClickHandler = (DATA: any, date: Date) => {
+    const messagesSelected = getChatsFromDate(DATA, date);
+    setMessagesSelected(messagesSelected);
+    fetchData("sentiment", messagesSelected);
+    fetchData("keyword", messagesSelected);
   };
 
   return (
@@ -192,9 +205,7 @@ const Messages = () => {
           {showCalendar ? (
             <LineChart
               data={transformedLineData}
-              onClick={(point, _event) =>
-                setMessagesSelected(getChatsFromDate(DATA, point.data.x))
-              }
+              onClick={(point, _event) => graphClickHandler(DATA, point.data.x)}
               increments={isSm ? 20 : 5}
             />
           ) : (
@@ -202,6 +213,9 @@ const Messages = () => {
               data={transformedCalendarData}
               startDate={firstMessageDate.split("T")[0]}
               endDate={lastMessageDate.split("T")[0]}
+              onClick={(day, _event) =>
+                graphClickHandler(DATA, new Date(day.date))
+              }
             />
           )}
         </div>
@@ -219,30 +233,63 @@ const Messages = () => {
         </div>
 
         {/* Messages from a date */}
-        {messagesSelected.length > 0 && (
+        {messagesSelected.length > 0 ? (
           <div className="flex flex-wrap mt-10 justify-center">
             {/* Messages */}
-            <div className="w-full md:w-[45%] mx-6 max-h-[] overflow-scroll border-2 rounded-md p-4">
-              <div className="mb-5">
+            <div className="w-full md:w-[45%] flex-grow mx-6 border-2 rounded-md p-4">
+              <div className="mb-3 flex justify-between items-baseline">
                 <p className="text-2xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
                   {`Messages from ${dateToString(
                     new Date(messagesSelected[0].date)
                   )}`}
                 </p>
+                {!showSentimentCard && (
+                  <p
+                    className="color-brand cursor-pointer hover:border-2 hover:border-t-0 hover:border-r-0 hover:border-l-0 hover:border-[#0088cc]"
+                    onClick={() => setShowSentimentCard(true)}
+                  >
+                    Show sentiment
+                  </p>
+                )}
               </div>
-              <button onClick={() => fetchData("sentiment")}>Sentiment</button>
-              <button onClick={() => fetchData("keyword")}>Keywords</button>
               <div className="flex flex-col">
+                <p className="mb-1">Keywords</p>
+                <div className="overflow-auto whitespace-nowrap no-scrollbar mb-3">
+                  {showKeyword.visible &&
+                    showKeyword.value.map((keyword, i) => {
+                      return (
+                        <div
+                          key={i}
+                          className="inline-block mx-2 px-2 py-1 rounded-xl border cursor-default"
+                        >
+                          <p>{keyword.keyword}</p>
+                        </div>
+                      );
+                    })}
+                </div>
                 {messagesSelected.map((message: IMessage, i: number) => (
                   <Message key={i} message={message} />
                 ))}
               </div>
             </div>
             {/* Sentiment + Keywords */}
-            <div className="w-full md:w-[45%] mx-6 border-2 rounded-md p-4">
-              <p className="text-2xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
-                Sentiment and Keyword Analysis
-              </p>
+            <div
+              className="w-full md:w-[45%] mx-6 border-2 rounded-md p-4"
+              style={
+                !showSentimentCard ? { display: "none" } : { display: "block" }
+              }
+            >
+              <div className="flex justify-between items-baseline">
+                <p className="text-2xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
+                  Sentiment Analysis
+                </p>
+                <p
+                  className="color-brand cursor-pointer hover:border-2 hover:border-t-0 hover:border-r-0 hover:border-l-0 hover:border-[#0088cc]"
+                  onClick={() => setShowSentimentCard(false)}
+                >
+                  Hide
+                </p>
+              </div>
               {showSentiment.visible && (
                 <div className="h-96">
                   <PieChart data={showSentiment.value} />
@@ -250,8 +297,59 @@ const Messages = () => {
               )}
             </div>
           </div>
+        ) : (
+          <Button
+            onClickButton={() => setShowModal(true)}
+            className="mt-10 self-center"
+          >
+            <p className="title-light self-center m-2">
+              Click on a specific date!
+            </p>
+          </Button>
         )}
       </div>
+
+      {/* Modal */}
+      {showModal ? (
+        <>
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className="relative w-auto my-6 mx-auto max-w-3xl">
+              {/*content*/}
+              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                {/*header*/}
+                <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
+                  <h3 className="text-3xl font-semibold">
+                    How to select a date
+                  </h3>
+                  <button
+                    className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+                    onClick={() => setShowModal(false)}
+                  >
+                    <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
+                      ×
+                    </span>
+                  </button>
+                </div>
+                {/*body*/}
+                <div className="relative p-6 flex-auto">
+                  <img src="/demo.gif" alt="select-date-demo" />
+                </div>
+                {/*footer*/}
+                <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
+                  <button
+                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        </>
+      ) : null}
     </>
   );
 };

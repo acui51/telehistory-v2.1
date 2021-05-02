@@ -10,6 +10,9 @@ module.exports = {
       colors: {
         brand: "#0088cc",
       },
+      animation: {
+        "spin-slow-once": "spin 2s linear forwards",
+      },
     },
   },
   variants: {

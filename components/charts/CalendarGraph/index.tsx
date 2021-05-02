@@ -1,4 +1,7 @@
-import { ResponsiveCalendar as ResponsiveNivoCalendar } from "@nivo/calendar";
+import {
+  CalendarMouseHandler,
+  ResponsiveCalendar as ResponsiveNivoCalendar,
+} from "@nivo/calendar";
 import { Calendar as NormalNivoCalendar } from "@nivo/calendar";
 import React from "react";
 
@@ -9,7 +12,16 @@ const CalendarGraph: React.FC<{
   homePage?: boolean;
   width?: number;
   height?: number;
-}> = ({ data, startDate, endDate, homePage = false, width, height }) => {
+  onClick: CalendarMouseHandler;
+}> = ({
+  data,
+  startDate,
+  endDate,
+  homePage = false,
+  width,
+  height,
+  onClick,
+}) => {
   return homePage ? (
     <NormalNivoCalendar
       width={900}
@@ -59,6 +71,7 @@ const CalendarGraph: React.FC<{
           </div>
         );
       }}
+      onClick={onClick}
     />
   );
 };

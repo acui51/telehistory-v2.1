@@ -16,3 +16,8 @@ export interface IMessage {
   file?: string;
   thumbnail?: string;
 }
+
+export interface IKeyword {
+  keyword: string;
+  confidence_score: number;
+}
