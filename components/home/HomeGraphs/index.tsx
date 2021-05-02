@@ -7,7 +7,7 @@ import transformLineData from "../../../helpers/lineGraph/transformData";
 import transformCalendarData from "../../../helpers/calendarGraph/transformData";
 import { useIsMd } from "../../../helpers/helpers";
 
-const index = () => {
+const HomeGraphs = () => {
   return (
     <div
       className="flex flex-col relative md:absolute top-72 md:top-0 z-[-1]"
@@ -44,4 +44,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default HomeGraphs;

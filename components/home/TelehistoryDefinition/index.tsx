@@ -1,7 +1,7 @@
 import React from "react";
 import { useIsMd } from "../../../helpers/helpers";
 
-const index = () => {
+const TelehistoryDefinition = () => {
   return (
     <div
       className="flex flex-col justify-center items-center"
@@ -43,4 +43,4 @@ const index = () => {
   );
 };
 
-export default index;
+export default TelehistoryDefinition;
