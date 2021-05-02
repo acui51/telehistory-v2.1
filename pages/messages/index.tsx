@@ -15,16 +15,53 @@ import transformCalendarData from "../../helpers/calendarGraph/transformData";
 import { getChatsFromDate, extractMessageText } from "../../helpers/helpers";
 import "react-datepicker/dist/react-datepicker.css";
 
+const dateToString = (date: Date) => {
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const days = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
+  return `${days[date.getDay()]} ${
+    months[date.getMonth()]
+  } ${date.getDate()} ${date.getFullYear()}`;
+};
+
 const Message = ({ message }: { message: IMessage }) => {
-  const dateString = new Date(message.date).toString();
+  const dateObj = new Date(message.date);
   const messageText = extractMessageText(message);
+  const hours = dateObj.getHours();
+  const minutes = dateObj.getMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const strTime = hours + ":" + minutes + " " + ampm;
+  const alignment = message.from === "Alix Cui" ? "self-end" : "";
+  const borderColor =
+    message.from === "Alix Cui" ? "border-[#0088cc]" : "border-black";
+  const boxStyles = `${borderColor} mb-5 border rounded p-4 inline-block`;
 
   return (
-    <div className="mb-5">
-      <div className="flex">
-        {dateString} {message.from}
+    <div className={alignment}>
+      <div className={boxStyles}>
+        <div className="flex items-center mb-1">
+          <span>{message.from}</span>
+          <div
+            className="h-1 w-1 bg-black m-1"
+            style={{ borderRadius: "50%" }}
+          ></div>
+          <span className="text-gray-300">{dateToString(dateObj)}</span>
+        </div>
+        <div className="mb-1">{messageText}</div>
+        <div className="float-right text-gray-300">{strTime}</div>
       </div>
-      {messageText}
     </div>
   );
 };
@@ -41,6 +78,14 @@ const Messages = () => {
     value: {},
   });
   const [showKeyword, setShowKeyword] = useState({ visible: false, value: {} });
+  const [showCalendar, setShowCalendar] = useState(true);
+  const graphSelectionClassname1 = `h-2 w-10 ${
+    showCalendar ? "bg-[#0088cc]" : "bg-gray-300"
+  } m-1 cursor-pointer transition duration-200 ease-in`;
+  const graphSelectionClassname2 = `h-2 w-10 ${
+    !showCalendar ? "bg-[#0088cc]" : "bg-gray-300"
+  } m-1 cursor-pointer transition duration-200 ease-in`;
+
   let transformedLineData = transformLineData(copyData);
   let transformedCalendarData = transformCalendarData(copyData);
 
@@ -79,77 +124,122 @@ const Messages = () => {
   };
 
   return (
-    <div className="px-32 py-16">
+    <>
       <Head>
         <title>Telehistory V2 - Messages</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {/* Date Picker */}
-      <DatePicker
-        selected={startDate}
-        onChange={(date: Date) => setStartDate(date)}
-        selectsStart
-        startDate={new Date(firstMessageDate)}
-        endDate={new Date(lastMessageDate)}
-      />
-      <DatePicker
-        selected={endDate}
-        selectsEnd
-        startDate={new Date(firstMessageDate)}
-        endDate={new Date(lastMessageDate)}
-        minDate={new Date(firstMessageDate)}
-        onChange={(date: Date) => setEndDate(date)} // end Date
-      />
-      <button onClick={updateDates}>Go</button>
-
-      {/* Line Chart */}
-      <div className="h-96">
-        <LineChart
-          data={transformedLineData}
-          onClick={(point, _event) =>
-            setMessagesSelected(getChatsFromDate(DATA, point.data.x))
-          }
-        />
+      {/* Hero Navbar */}
+      <div className="flex items-center justify-between fixed w-full p-4 z-10 bg-[#0088cc]">
+        <div className="flex">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6 mr-2.5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="white"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1}
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
+          <div className="title-heavy text-white">Telehistory V2</div>
+        </div>
       </div>
-      <div className="h-96">
-        <CalendarChart
-          data={transformedCalendarData}
-          startDate={firstMessageDate.split("T")[0]}
-          endDate={lastMessageDate.split("T")[0]}
-        />
+      <div className="px-32 py-16 flex flex-col">
+        {/* Date Picker */}
+        {/* <div>
+          <DatePicker
+            selected={startDate}
+            onChange={(date: Date) => setStartDate(date)}
+            selectsStart
+            startDate={new Date(firstMessageDate)}
+            endDate={new Date(lastMessageDate)}
+          />
+          <DatePicker
+            selected={endDate}
+            selectsEnd
+            startDate={new Date(firstMessageDate)}
+            endDate={new Date(lastMessageDate)}
+            minDate={new Date(firstMessageDate)}
+            onChange={(date: Date) => setEndDate(date)} // end Date
+          />
+          <button onClick={updateDates}>Go</button>
+        </div> */}
+        <div className="mt-4">
+          <p className="text-3xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
+            Message Frequency
+          </p>
+        </div>
+        {/* Line Chart */}
+        <div className="h-96">
+          {showCalendar ? (
+            <LineChart
+              data={transformedLineData}
+              onClick={(point, _event) =>
+                setMessagesSelected(getChatsFromDate(DATA, point.data.x))
+              }
+            />
+          ) : (
+            <CalendarChart
+              data={transformedCalendarData}
+              startDate={firstMessageDate.split("T")[0]}
+              endDate={lastMessageDate.split("T")[0]}
+            />
+          )}
+        </div>
+
+        {/* Bar selectors */}
+        <div className="self-center flex items-center">
+          <div
+            className={graphSelectionClassname1}
+            onClick={() => setShowCalendar(true)}
+          ></div>
+          <div
+            className={graphSelectionClassname2}
+            onClick={() => setShowCalendar(false)}
+          ></div>
+        </div>
+
+        {/* Messages from a date */}
+        {messagesSelected.length > 0 && (
+          <div className="flex flex-wrap mt-10 justify-center">
+            {/* Messages */}
+            <div className="w-full md:w-[45%] mx-7 max-h-[] overflow-scroll border-2 rounded-md p-4">
+              <div className="mb-5">
+                <p className="text-2xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
+                  {`Messages from ${dateToString(
+                    new Date(messagesSelected[0].date)
+                  )}`}
+                </p>
+              </div>
+              <button onClick={() => fetchData("sentiment")}>Sentiment</button>
+              <button onClick={() => fetchData("keyword")}>Keywords</button>
+              <div className="flex flex-col">
+                {messagesSelected.map((message: IMessage, i: number) => (
+                  <Message key={i} message={message} />
+                ))}
+              </div>
+            </div>
+            {/* Sentiment + Keywords */}
+            <div className="w-full md:w-[45%] mx-7 border-2 rounded-md p-4">
+              <p className="text-2xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
+                Sentiment and Keyword Analysis
+              </p>
+              {showSentiment.visible && (
+                <div className="h-96">
+                  <PieChart data={showSentiment.value} />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Messages from a date */}
-      {messagesSelected.length > 0 && (
-        <>
-          <div className="text-2xl mb-5">
-            {`Messages selected from ${new Date(
-              messagesSelected[0].date
-            ).toString()}`}
-          </div>
-          <button onClick={() => fetchData("sentiment")}>Sentiment</button>
-          <button onClick={() => fetchData("keyword")}>Keywords</button>
-
-          {showKeyword.visible && (
-            <div>
-              <BubbleChart />
-            </div>
-          )}
-          {showSentiment.visible && (
-            <div className="h-96">
-              <PieChart data={showSentiment.value} />
-            </div>
-          )}
-
-          <div>
-            {messagesSelected.map((message: IMessage, i: number) => (
-              <Message key={i} message={message} />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
+    </>
   );
 };
 
