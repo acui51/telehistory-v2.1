@@ -19,10 +19,10 @@ const HeroBlueCircle = () => {
         ></div>
       ) : (
         <div
-          className="bg-brand fixed z-[-1]"
+          className="bg-brand fixed z-0"
           style={{
             width: "100vw",
-            height: "35vh",
+            height: "25vh",
           }}
         ></div>
       )}

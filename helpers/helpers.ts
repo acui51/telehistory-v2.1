@@ -72,6 +72,7 @@ export const useMediaQuery = ({
   });
 };
 
+/* Media queries */
 export const useIsSm = () => {
   return useMediaQuery({
     maxWidth: "sm",
@@ -88,4 +89,34 @@ export const useIsLg = () => {
   return useMediaQuery({
     minWidth: "lg",
   });
+};
+
+// Generating mock data
+export const generateGraphData = (days: number, messageLimit: number) => {
+  const randomFromId = Math.floor(Math.random() * 2) + 1;
+  let messages = [];
+  let currDate = new Date("2021-01-01T03:24:00");
+  for (let i = 0; i < days; i++) {
+    const numberOfMessages = Math.floor(Math.random() * messageLimit) + 1;
+    const randomChance = Math.floor(Math.random() * 4) + 1;
+    // Simulate 75% chance they message that day
+    if (randomChance <= 3) {
+      for (let j = 0; j < numberOfMessages; j++) {
+        messages.push({
+          date: currDate.toISOString(),
+          from: "John Doe",
+          from_id: randomFromId === 1 ? 123 : 124,
+          text: "Test",
+        });
+      }
+    }
+    currDate.setDate(currDate.getDate() + 1);
+  }
+
+  return {
+    name: "John 1",
+    type: "personal_chat",
+    id: 123,
+    messages: messages,
+  };
 };

@@ -174,14 +174,14 @@ const Messages = () => {
       </div>
 
       {/* Body */}
-      <div className="px-4 py-16 sm:px-32 sm:py-16 flex flex-col">
+      <div className="px-4 py-16 md:px-32 sm:py-16 flex flex-col">
         <div className="mt-4 mb-2">
           <p className="text-3xl border-2 border-t-0 border-r-0 border-l-0 border-[#0088cc] inline-block">
             Message Frequency
           </p>
         </div>
         {/* Date Picker */}
-        <div className="flex">
+        <div className="flex items-center">
           <p className="mr-5">Select Dates:</p>
           <DatePicker
             selected={startDate}
@@ -198,7 +198,22 @@ const Messages = () => {
             minDate={new Date(firstMessageDate)}
             onChange={(date: Date) => setEndDate(date)} // end Date
           />
-          <button onClick={updateDates}>Go</button>
+          <Button className=" bg-white" onClickButton={updateDates}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="#0088CC"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </svg>
+          </Button>
         </div>
         {/* Line Chart */}
         <div className="h-96">
@@ -219,7 +234,6 @@ const Messages = () => {
             />
           )}
         </div>
-
         {/* Bar selectors */}
         <div className="self-center flex items-center">
           <div
@@ -274,7 +288,7 @@ const Messages = () => {
             </div>
             {/* Sentiment + Keywords */}
             <div
-              className="w-full md:w-[45%] mx-6 border-2 rounded-md p-4"
+              className="w-full mt-10 lg:mt-0 md:w-[45%] mx-6 border-2 rounded-md p-4 "
               style={
                 !showSentimentCard ? { display: "none" } : { display: "block" }
               }
@@ -312,11 +326,11 @@ const Messages = () => {
       {/* Modal */}
       {showModal ? (
         <>
-          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
-              {/*content*/}
+              {/* Content */}
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                {/*header*/}
+                {/* Header */}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
                   <h3 className="text-3xl font-semibold">
                     How to select a date
@@ -330,11 +344,11 @@ const Messages = () => {
                     </span>
                   </button>
                 </div>
-                {/*body*/}
+                {/* Body */}
                 <div className="relative p-6 flex-auto">
                   <img src="/demo.gif" alt="select-date-demo" />
                 </div>
-                {/*footer*/}
+                {/* Footer */}
                 <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
                   <button
                     className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"

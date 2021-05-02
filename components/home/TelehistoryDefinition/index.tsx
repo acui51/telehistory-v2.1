@@ -8,13 +8,13 @@ const TelehistoryDefinition = () => {
 
   return (
     <div
-      className="flex flex-col justify-center items-center"
+      className="flex flex-col justify-center items-center z-10"
       style={{
         height: useIsMd() ? "100vh" : "100%",
         width: useIsMd() ? "55vw" : "100%",
       }}
     >
-      <div className="flex items-center fixed mt-72 md:mt-0">
+      <div className="flex items-center fixed mt-80 md:mt-0">
         <div style={{ maxWidth: "450px" }}>
           <div className="flex items-center">
             <p className="display-heavy text-white mr-2">

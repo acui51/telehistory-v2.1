@@ -12,7 +12,7 @@ const CalendarGraph: React.FC<{
   homePage?: boolean;
   width?: number;
   height?: number;
-  onClick: CalendarMouseHandler;
+  onClick?: CalendarMouseHandler;
 }> = ({
   data,
   startDate,
@@ -38,14 +38,8 @@ const CalendarGraph: React.FC<{
       tooltip={(data) => {
         if (data.value === undefined) return null;
         return (
-          <div
-            style={{
-              backgroundColor: "black",
-              padding: "10px",
-              borderRadius: 4,
-            }}
-          >
-            <span style={{ color: "white" }}>{data.value} messages</span>{" "}
+          <div className="bg-gray-50 rounded-md p-1">
+            <span style={{ color: "black" }}>{data.value} messages</span>{" "}
             <span style={{ color: "gray" }}>on {data.day}</span>
           </div>
         );

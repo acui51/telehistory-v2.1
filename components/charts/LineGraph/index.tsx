@@ -60,7 +60,7 @@ const LineChart = ({
   enableCrosshair?: boolean;
   customMargin?: IMargin;
   homePage?: boolean;
-  increments: number;
+  increments?: number;
   width?: number;
   height?: number;
 }) => {
