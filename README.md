@@ -1,34 +1,29 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Welcome to Telehistory V2.1!
+1 year ago, I started learning React.js, and Telehistory was my first ever personal project made with just React and ChartJS. One year later, I decided to do a quick remake using some new tech: Next.js, TypeScript, Tailwind CSS, Nivo Graphs, and the Parallel Dots API.
+
+<img width="1435" alt="Screen Shot 2021-05-21 at 1 20 38 AM" src="https://user-images.githubusercontent.com/62365251/119093018-c7ba1b00-b9d4-11eb-8b1d-3a7f3a9566c5.png">
+
 
 ## Getting Started
 
 First, run the development server:
 
 ```bash
-npm run dev
-# or
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create an `.env` file and add this:
+```
+PARALLEL_DOTS_API_KEY=<your api key>
+ENV=<PROD or DEV>
+```
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+Setting ENV to `PROD` will use the Parallel Dots to fetch live data. `DEV` will use the data located in `/mockData`.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+Add in your own Telegram chat history data! Just export the chat as JSON and move it into `/mockData` and replace `result.json` with it. (It should also be named `result.json`)
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Have fun exploring!
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Screenshots:
+<img width="1435" alt="Screen Shot 2021-05-21 at 1 21 05 AM" src="https://user-images.githubusercontent.com/62365251/119093032-cdaffc00-b9d4-11eb-8318-6244c6f2e8fb.png">
+<img width="1435" alt="Screen Shot 2021-05-21 at 1 21 27 AM" src="https://user-images.githubusercontent.com/62365251/119093041-d0aaec80-b9d4-11eb-9daf-dab5d020e63d.png">
