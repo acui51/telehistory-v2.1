@@ -11,6 +11,7 @@ import { getChatsFromDate, extractMessageText } from "../../helpers/helpers";
 import { useIsSm } from "../../helpers/helpers";
 import { useRouter } from "next/router";
 import Button from "@/ui/Button";
+import Modal from "@/ui/Modal";
 import "react-datepicker/dist/react-datepicker.css";
 
 const dateToString = (date: Date) => {
@@ -34,16 +35,16 @@ const dateToString = (date: Date) => {
   } ${date.getDate()} ${date.getFullYear()}`;
 };
 
-const Message = ({ message }: { message: IMessage }) => {
+const Message = ({ message, name }: { message: IMessage; name: String }) => {
   const dateObj = new Date(message.date);
   const messageText = extractMessageText(message);
   const hours = dateObj.getHours();
   const minutes = dateObj.getMinutes();
   const ampm = hours >= 12 ? "PM" : "AM";
   const strTime = hours + ":" + minutes + " " + ampm;
-  const alignment = message.from === "Alix Cui" ? "self-end" : "";
+  const alignment = message.from === name ? "self-end" : "";
   const borderColor =
-    message.from === "Alix Cui" ? "border-[#0088cc]" : "border-black";
+    message.from === name ? "border-[#0088cc]" : "border-black";
   const boxStyles = `${borderColor} mb-5 border rounded p-4 inline-block`;
 
   return (
@@ -65,12 +66,18 @@ const Message = ({ message }: { message: IMessage }) => {
 };
 
 const Messages = () => {
+  // Graph information
   const firstMessageDate = DATA.messages[0].date;
   const lastMessageDate = DATA.messages[DATA.messages.length - 1].date;
   const [copyData, setCopyData] = useState<any>(DATA);
   const [messagesSelected, setMessagesSelected] = useState<IMessage[]>([]);
   const [startDate, setStartDate] = useState<Date>(new Date(firstMessageDate));
   const [endDate, setEndDate] = useState<Date>(new Date(lastMessageDate));
+  const [name, setName] = useState<string>("John Doe");
+  let transformedLineData = transformLineData(copyData);
+  let transformedCalendarData = transformCalendarData(copyData);
+
+  // Show/display conditionals
   const [showSentiment, setShowSentiment] = useState({
     visible: false,
     value: {},
@@ -78,21 +85,24 @@ const Messages = () => {
   const [showSentimentCard, setShowSentimentCard] = useState<boolean>(true);
   const [showKeyword, setShowKeyword] = useState<{
     visible: boolean;
-    value: IKeyword[];
-  }>({ visible: false, value: [] });
+    value: { keywords: IKeyword[] };
+  }>({ visible: false, value: { keywords: [] } });
   const [showCalendar, setShowCalendar] = useState(true);
   const [showModal, setShowModal] = useState(false);
+
+  // Media query hook
+  const isSm = useIsSm();
+
+  // Router
+  const router = useRouter();
+
+  // Graph selection divs
   const graphSelectionClassname1 = `h-2 w-10 ${
     showCalendar ? "bg-[#0088cc]" : "bg-gray-300"
   } m-1 cursor-pointer transition duration-200 ease-in`;
   const graphSelectionClassname2 = `h-2 w-10 ${
     !showCalendar ? "bg-[#0088cc]" : "bg-gray-300"
   } m-1 cursor-pointer transition duration-200 ease-in`;
-  const isSm = useIsSm();
-  const router = useRouter();
-
-  let transformedLineData = transformLineData(copyData);
-  let transformedCalendarData = transformCalendarData(copyData);
 
   /** Fetch a classification data for a certain day when messages selected */
   const fetchData = (endpoint: string, messagesSelected: any) => {
@@ -171,6 +181,15 @@ const Messages = () => {
           </svg>
           <div className="title-heavy text-white">Telehistory V2</div>
         </div>
+        <div className="flex items-center text-white">
+          <p className="mr-2">Telegram Name:</p>
+          <input
+            className="rounded-md px-2 focus:outline-none text-black"
+            type="text"
+            onChange={(e) => setName(e.target.value)}
+            placeholder={name}
+          />
+        </div>
       </div>
 
       {/* Body */}
@@ -215,7 +234,8 @@ const Messages = () => {
             </svg>
           </Button>
         </div>
-        {/* Line Chart */}
+
+        {/* Line + Calendar Charts */}
         <div className="h-96">
           {showCalendar ? (
             <LineChart
@@ -269,20 +289,27 @@ const Messages = () => {
               <div className="flex flex-col">
                 <p className="mb-1">Keywords</p>
                 <div className="overflow-auto whitespace-nowrap no-scrollbar mb-3">
-                  {showKeyword.visible &&
-                    showKeyword.value.map((keyword, i) => {
-                      return (
-                        <div
-                          key={i}
-                          className="inline-block mx-2 px-2 py-1 rounded-xl border cursor-default"
-                        >
-                          <p>{keyword.keyword}</p>
-                        </div>
-                      );
-                    })}
+                  {showKeyword.visible ? (
+                    showKeyword.value.keywords.length > 0 ? (
+                      showKeyword.value.keywords.map((keyword, i) => {
+                        return (
+                          <div
+                            key={i}
+                            className="inline-block mx-2 px-2 py-1 rounded-xl border cursor-default"
+                          >
+                            <p>{keyword.keyword}</p>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <div>No keywords found</div>
+                    )
+                  ) : (
+                    <div>Loading...</div>
+                  )}
                 </div>
                 {messagesSelected.map((message: IMessage, i: number) => (
-                  <Message key={i} message={message} />
+                  <Message key={i} message={message} name={name} />
                 ))}
               </div>
             </div>
@@ -304,10 +331,12 @@ const Messages = () => {
                   Hide
                 </p>
               </div>
-              {showSentiment.visible && (
+              {showSentiment.visible ? (
                 <div className="h-96">
                   <PieChart data={showSentiment.value} />
                 </div>
+              ) : (
+                <div>Loading...</div>
               )}
             </div>
           </div>
@@ -325,44 +354,11 @@ const Messages = () => {
 
       {/* Modal */}
       {showModal ? (
-        <>
-          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none ">
-            <div className="relative w-auto my-6 mx-auto max-w-3xl">
-              {/* Content */}
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
-                {/* Header */}
-                <div className="flex items-start justify-between p-5 border-b border-solid border-blueGray-200 rounded-t">
-                  <h3 className="text-3xl font-semibold">
-                    How to select a date
-                  </h3>
-                  <button
-                    className="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                    onClick={() => setShowModal(false)}
-                  >
-                    <span className="bg-transparent text-black opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none">
-                      ×
-                    </span>
-                  </button>
-                </div>
-                {/* Body */}
-                <div className="relative p-6 flex-auto">
-                  <img src="/demo.gif" alt="select-date-demo" />
-                </div>
-                {/* Footer */}
-                <div className="flex items-center justify-end p-6 border-t border-solid border-blueGray-200 rounded-b">
-                  <button
-                    className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
-        </>
+        <Modal
+          header="How to select a date"
+          body={<img src="/demo.gif" alt="select-date-demo" />}
+          setModal={setShowModal}
+        />
       ) : null}
     </>
   );

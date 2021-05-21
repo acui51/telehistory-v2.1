@@ -368,6 +368,15 @@
   "resolved" "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.3.tgz"
   "version" "15.7.3"
 
+"@types/react-datepicker@^3.1.8":
+  "integrity" "sha512-RFEg7++xhosMq02i2lsuaUPEbZGn66U3dxtvw9LU/ZRqLkBGr9Ft2LTz6vbeYYVtaBdOr0NcQatOLnlfUaS8kw=="
+  "resolved" "https://registry.npmjs.org/@types/react-datepicker/-/react-datepicker-3.1.8.tgz"
+  "version" "3.1.8"
+  dependencies:
+    "@types/react" "*"
+    "date-fns" "^2.0.1"
+    "popper.js" "^1.14.1"
+
 "@types/react-responsive@^8.0.2":
   "integrity" "sha512-DTvm3Hb77v0hme7L4GYzRjLQqlZP+zNImFBzdKbSH7CsQ5c7QebGnSQX2Xf3BaA0rm/TQE57eFMhMGLcMe/A9w=="
   "resolved" "https://registry.npmjs.org/@types/react-responsive/-/react-responsive-8.0.2.tgz"
@@ -794,7 +803,6 @@
   dependencies:
     "anymatch" "~3.1.1"
     "braces" "~3.0.2"
-    "fsevents" "~2.3.1"
     "glob-parent" "~5.1.0"
     "is-binary-path" "~2.1.0"
     "is-glob" "~4.0.1"
@@ -1964,7 +1972,6 @@
   "resolved" "https://registry.yarnpkg.com/jsonfile/-/jsonfile-6.1.0.tgz"
   "version" "6.1.0"
   dependencies:
-    "graceful-fs" "^4.1.6"
     "universalify" "^2.0.0"
   optionalDependencies:
     "graceful-fs" "^4.1.6"
@@ -2486,7 +2493,7 @@
   dependencies:
     "ts-pnp" "^1.1.6"
 
-"popper.js@^1.14.4":
+"popper.js@^1.14.1", "popper.js@^1.14.4":
   "integrity" "sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ=="
   "resolved" "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz"
   "version" "1.16.1"
