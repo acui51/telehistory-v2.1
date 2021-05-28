@@ -1,5 +1,5 @@
 ## Welcome to Telehistory V2.1!
-1 year ago, I started learning React.js, and Telehistory was my first ever personal project made with just React and ChartJS. One year later, I decided to do a quick remake using some new tech: Next.js, TypeScript, Tailwind CSS, Nivo Graphs, and the Parallel Dots API.
+1 year ago, I started learning React.js, and Telehistory was my first ever personal project made with just React and ChartJS. One year later, I decided to do a quick remake and restyle using some new tech and features: Next.js, TypeScript, Tailwind CSS, Nivo Graphs, and the Parallel Dots API.
 
 <img width="1435" alt="Screen Shot 2021-05-21 at 1 20 38 AM" src="https://user-images.githubusercontent.com/62365251/119093018-c7ba1b00-b9d4-11eb-8b1d-3a7f3a9566c5.png">
 
